@@ -1,12 +1,8 @@
-class ErrorMessagesClass:
-    def __init__(self, cmd_not_found, cmds_args_missing, divison_by_zero, type_error) -> None:
-        self.cmd_not_found = cmd_not_found
-        self.cmds_args_missing = cmds_args_missing
-        self.divison_by_zero = divison_by_zero
-        self.type_error = type_error
-        
+import os
 
-ErrorMessages = ErrorMessagesClass(cmd_not_found="Comando não encontrado!",cmds_args_missing="Comando está sem 1 ou mais argumentos!", divison_by_zero= "Não posso dividir por zero", type_error="O tipo de arg está incorreto!")
+Error_messages = {
+    "Command not found" : "The given command was not found. Use --Commands to show all commands available."
+}
 
 commands = {}
 
@@ -22,22 +18,29 @@ class Program:
         
     def mainLoop(self):
         print(self.start_msg)
-        
+        print(commands)
         while True:
             command_given = input(self.cmd_line).lower()
             
-            try:
-                found_command = self.commands[command_given]
-            except KeyError:
-                print(ErrorMessages.cmd_not_found)
+            if command_given == "__k":
+                os.system("cls")
+                break
+                
 
-def command(func, name):
+            try:
+                found_command = commands[command_given]
+            except KeyError:
+                print(Error_messages["Command not found"])
+
+
+def command(func):
     
-    def wrapper(*args, **kwargs):
-        print("Start")
+    def formated_command_function(name,*args):
+        print("Wrapped")
+        func(args)
+        print("Finished")
+    
+    commands[func.__name__.lower()] = formated_command_function
+    return formated_command_function
         
-        func(*args,**kwargs)
         
-        print("Finish")
-        
-    return wrapper
